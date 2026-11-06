@@ -1,0 +1,208 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Sign In";
+}
+
+<link rel="stylesheet"
+      href="~/css/auth.css"
+      asp-append-version="true" />
+
+<div class="sr-auth-page">
+    <div class="sr-auth-shell">
+
+        <!-- LEFT BRANDING -->
+        <aside class="sr-auth-brand">
+
+            <a asp-area=""
+               asp-controller="Home"
+               asp-action="Index"
+               class="sr-auth-logo">
+                <span class="sr-auth-logo-icon">◆</span>
+                SafeRoute SA
+            </a>
+
+            <div class="sr-auth-brand-content">
+
+                <div class="sr-auth-eyebrow">
+                    COMMUNITY SAFETY PLATFORM
+                </div>
+
+                <h1>
+                    Welcome back to
+                    <span>safer reporting.</span>
+                </h1>
+
+                <p>
+                    Access your account to report incidents,
+                    select GPS locations and manage your
+                    submitted reports.
+                </p>
+
+                <div class="sr-auth-feature">
+                    <span>✓</span>
+                    GPS Incident Reporting
+                </div>
+
+                <div class="sr-auth-feature">
+                    <span>✓</span>
+                    Incident Report Management
+                </div>
+
+                <div class="sr-auth-feature">
+                    <span>✓</span>
+                    Secure Account Authentication
+                </div>
+
+            </div>
+
+            <div class="sr-auth-brand-footer">
+                SafeRoute SA | Portfolio Demonstration
+            </div>
+
+        </aside>
+
+        <!-- RIGHT LOGIN FORM -->
+        <section class="sr-auth-form-panel">
+
+            <div class="sr-auth-form-content">
+
+                <!-- GOODBYE MESSAGE -->
+                @if (TempData["LogoutMessage"] is string logoutMessage)
+                {
+                    <div class="alert alert-success alert-dismissible fade show"
+                         role="status">
+
+                        <strong>👋 See you soon!</strong>
+
+                        <p class="mb-0 mt-1">
+                            @logoutMessage
+                        </p>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                aria-label="Close">
+                        </button>
+                    </div>
+                }
+
+                <div class="sr-auth-form-heading">
+
+                    <div class="sr-auth-form-eyebrow">
+                        WELCOME BACK
+                    </div>
+
+                    <h2>Sign in to your account</h2>
+
+                    <p>
+                        Enter your email address and password
+                        to continue.
+                    </p>
+
+                </div>
+
+                <form id="account"
+                      method="post"
+                      asp-route-returnUrl="@Model.ReturnUrl">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="sr-auth-error"
+                         role="alert">
+                    </div>
+
+                    <!-- EMAIL -->
+                    <div class="sr-auth-field">
+
+                        <label asp-for="Input.Email"></label>
+
+                        <input asp-for="Input.Email"
+                               class="sr-auth-input"
+                               autocomplete="username"
+                               placeholder="you@example.com" />
+
+                        <span asp-validation-for="Input.Email"
+                              class="text-danger small"></span>
+
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div class="sr-auth-field">
+
+                        <div class="sr-auth-label-row">
+
+                            <label asp-for="Input.Password"></label>
+
+                            <a asp-page="./ForgotPassword"
+                               class="sr-auth-text-link">
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+                        <input asp-for="Input.Password"
+                               class="sr-auth-input"
+                               autocomplete="current-password"
+                               placeholder="Enter your password" />
+
+                        <span asp-validation-for="Input.Password"
+                              class="text-danger small"></span>
+
+                    </div>
+
+                    <!-- REMEMBER ME -->
+                    <div class="sr-auth-remember">
+
+                        <input asp-for="Input.RememberMe"
+                               class="form-check-input" />
+
+                        <label asp-for="Input.RememberMe">
+                            Remember me
+                        </label>
+
+                    </div>
+
+                    <!-- LOGIN BUTTON -->
+                    <button id="login-submit"
+                            type="submit"
+                            class="sr-auth-submit">
+
+                        Sign In
+                        <span>→</span>
+
+                    </button>
+
+                </form>
+
+                <div class="sr-auth-switch">
+
+                    Don't have an account?
+
+                    <a asp-page="./Register"
+                       asp-route-returnUrl="@Model.ReturnUrl">
+                        Create an account
+                    </a>
+
+                </div>
+
+                <div class="sr-auth-back">
+
+                    <a asp-area=""
+                       asp-controller="Home"
+                       asp-action="Index">
+                        ← Back to homepage
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

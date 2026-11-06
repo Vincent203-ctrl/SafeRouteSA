@@ -1,0 +1,373 @@
+﻿@model SafeRouteSA.Web.ViewModels.AdminIncidentDetailsViewModel
+@using SafeRouteSA.Web.Models
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Admin Incident Details";
+
+    var incident = Model.Incident;
+
+    var latitude = incident.Latitude.ToString(
+        CultureInfo.InvariantCulture);
+
+    var longitude = incident.Longitude.ToString(
+        CultureInfo.InvariantCulture);
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoT4llR2s0q5c="
+          crossorigin="" />
+
+    <link rel="stylesheet"
+          href="~/css/incident.css"
+          asp-append-version="true" />
+
+    <style>
+        #adminIncidentMap {
+            height: 380px;
+            width: 100%;
+            border-radius: 12px;
+            z-index: 0;
+        }
+
+        .sr-admin-detail-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .sr-admin-detail-value {
+            font-weight: 600;
+            margin-bottom: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .sr-admin-notes {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+    </style>
+}
+
+<div class="incident-page">
+
+    <!-- HEADER -->
+    <div class="incident-header">
+        <div>
+            <span class="eyebrow">
+                ADMIN INCIDENT REVIEW
+            </span>
+
+            <h1>@incident.Title</h1>
+
+            <p>Reference: @incident.ReferenceNumber</p>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Back to Dashboard
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="alert alert-success">
+            @success
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <div class="alert alert-danger">
+            @error
+        </div>
+    }
+
+    <div class="alert alert-warning">
+        Demo platform only — no emergency services
+        are notified or dispatched.
+    </div>
+
+    <!-- REPORT DETAILS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-5">
+            <div class="incident-card h-100">
+
+                <h4>Report Information</h4>
+                <hr />
+
+                <p class="sr-admin-detail-label">
+                    Submitted By
+                </p>
+                <p class="sr-admin-detail-value">
+                    @Model.ReporterEmail
+                </p>
+
+                <p class="sr-admin-detail-label">
+                    Reference Number
+                </p>
+                <p class="sr-admin-detail-value">
+                    @incident.ReferenceNumber
+                </p>
+
+                <p class="sr-admin-detail-label">
+                    Category
+                </p>
+                <p class="sr-admin-detail-value">
+                    @incident.Category
+                </p>
+
+                <p class="sr-admin-detail-label">
+                    Date Submitted
+                </p>
+                <p class="sr-admin-detail-value">
+                    @incident.CreatedAtUtc.ToString(
+                        "dd MMM yyyy HH:mm") UTC
+                </p>
+
+                <p class="sr-admin-detail-label">
+                    Approval Status
+                </p>
+
+                <p>
+                    @switch (incident.ApprovalStatus)
+                    {
+                        case IncidentApprovalStatus.Pending:
+                            <span class="badge bg-warning text-dark">
+                                Pending Approval
+                            </span>
+                            break;
+
+                        case IncidentApprovalStatus.Approved:
+                            <span class="badge bg-success">
+                                Approved
+                            </span>
+                            break;
+
+                        case IncidentApprovalStatus.Rejected:
+                            <span class="badge bg-danger">
+                                Rejected
+                            </span>
+                            break;
+
+                        default:
+                            <span class="badge bg-secondary">
+                                Unknown
+                            </span>
+                            break;
+                    }
+                </p>
+
+                <p class="sr-admin-detail-label">
+                    Incident Progress
+                </p>
+
+                <p class="sr-admin-detail-value">
+                    @incident.Status
+                </p>
+
+                <h5>Description</h5>
+                <p class="incident-description">
+                    @incident.Description
+                </p>
+
+                <h5>Location Description</h5>
+                <p>
+                    @(string.IsNullOrWhiteSpace(
+                        incident.LocationDescription)
+                        ? "Not provided"
+                        : incident.LocationDescription)
+                </p>
+
+            </div>
+        </div>
+
+        <!-- LOCATION MAP -->
+        <div class="col-lg-7">
+            <div class="incident-card h-100">
+
+                <h4>Reported GPS Location</h4>
+                <hr />
+
+                <div id="adminIncidentMap"
+                     role="region"
+                     aria-label="Incident location map">
+                </div>
+
+                <p class="text-muted small mt-3">
+                    Latitude: @incident.Latitude |
+                    Longitude: @incident.Longitude
+                </p>
+
+                <p class="text-muted small">
+                    This marker represents the location
+                    submitted by the reporting user.
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN REVIEW -->
+    <div class="incident-card">
+
+        <h4>Administrator Review</h4>
+        <hr />
+
+        @if (incident.ApprovalStatus ==
+             IncidentApprovalStatus.Pending)
+        {
+            <p class="text-muted">
+                Review the report information and location
+                before making a decision.
+            </p>
+
+            <div class="row g-4">
+
+                <!-- APPROVE -->
+                <div class="col-md-6">
+                    <form asp-controller="Admin"
+                          asp-action="Approve"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@incident.Id" />
+
+                        <label class="form-label fw-semibold"
+                               for="approvalNotes">
+                            Approval Notes
+                        </label>
+
+                        <textarea id="approvalNotes"
+                                  name="reviewNotes"
+                                  class="form-control mb-3"
+                                  rows="4"
+                                  maxlength="1000"
+                                  placeholder="Optional approval feedback"></textarea>
+
+                        <button type="submit"
+                                class="btn btn-success w-100"
+                                onclick="return confirm('Approve this incident report?');">
+                            Approve Incident
+                        </button>
+                    </form>
+                </div>
+
+                <!-- REJECT -->
+                <div class="col-md-6">
+                    <form asp-controller="Admin"
+                          asp-action="Reject"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@incident.Id" />
+
+                        <label class="form-label fw-semibold"
+                               for="rejectionNotes">
+                            Rejection Reason
+                        </label>
+
+                        <textarea id="rejectionNotes"
+                                  name="reviewNotes"
+                                  class="form-control mb-3"
+                                  rows="4"
+                                  maxlength="1000"
+                                  required
+                                  placeholder="Explain why this report is rejected"></textarea>
+
+                        <button type="submit"
+                                class="btn btn-outline-danger w-100"
+                                onclick="return confirm('Reject this incident report?');">
+                            Reject Incident
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                This incident has already been reviewed.
+                Its approval decision is final in the
+                current workflow.
+            </div>
+
+            <p>
+                <strong>Decision:</strong>
+                @incident.ApprovalStatus
+            </p>
+
+            <p>
+                <strong>Reviewed By:</strong>
+                @Model.ReviewerEmail
+            </p>
+
+            <p>
+                <strong>Review Date:</strong>
+                @(incident.ReviewedAtUtc.HasValue
+                    ? incident.ReviewedAtUtc.Value.ToString(
+                        "dd MMM yyyy HH:mm") + " UTC"
+                    : "Not recorded")
+            </p>
+
+            <p>
+                <strong>Administrator Notes:</strong>
+            </p>
+
+            <p class="sr-admin-notes">
+                @(string.IsNullOrWhiteSpace(
+                    incident.ReviewNotes)
+                    ? "No notes recorded."
+                    : incident.ReviewNotes)
+            </p>
+        }
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin="">
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const latitude = @latitude;
+            const longitude = @longitude;
+
+            const map = L.map("adminIncidentMap")
+                .setView([latitude, longitude], 15);
+
+            L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    attribution: "&copy; OpenStreetMap contributors",
+                    maxZoom: 19
+                }
+            ).addTo(map);
+
+            L.marker([latitude, longitude])
+                .addTo(map)
+                .bindPopup("Reported incident location")
+                .openPopup();
+
+            setTimeout(function () {
+                map.invalidateSize();
+            }, 150);
+        });
+    </script>
+}

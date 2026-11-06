@@ -1,0 +1,210 @@
+﻿@model IEnumerable<SafeRouteSA.Web.Models.Incident>
+@using SafeRouteSA.Web.Models
+
+@{
+    ViewData["Title"] = "My Incident Reports";
+}
+
+<link rel="stylesheet"
+      href="~/css/incident.css"
+      asp-append-version="true" />
+
+<div class="incident-page">
+
+    <!-- PAGE HEADER -->
+    <div class="incident-header">
+        <div>
+            <span class="eyebrow">SAFEROUTE SA</span>
+            <h1>My Incident Reports</h1>
+            <p>View and track your submitted demo incidents.</p>
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary">
+            + Report Incident
+        </a>
+    </div>
+
+    <!-- DEMO NOTICE -->
+    <div class="alert alert-warning">
+        Demo platform only — no emergency services are notified.
+    </div>
+
+    <!-- REPORTS -->
+    <div class="incident-card">
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <h4>No incidents reported yet</h4>
+
+                <p class="text-muted">
+                    Your incident reports will appear here.
+                </p>
+
+                <a asp-action="Create" class="btn btn-primary">
+                    Create First Report
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Approval Status</th>
+                            <th>Incident Progress</th>
+                            <th>Admin Feedback</th>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var incident in Model)
+                        {
+                            <tr>
+
+                                <!-- REFERENCE -->
+                                <td>
+                                    <span class="small">
+                                        @incident.ReferenceNumber
+                                    </span>
+                                </td>
+
+                                <!-- TITLE -->
+                                <td>
+                                    <strong>@incident.Title</strong>
+                                </td>
+
+                                <!-- CATEGORY -->
+                                <td>
+                                    @incident.Category
+                                </td>
+
+                                <!-- APPROVAL STATUS -->
+                                <td>
+                                    @switch (incident.ApprovalStatus)
+                                    {
+                                        case IncidentApprovalStatus.Pending:
+                                            <span class="badge bg-warning text-dark">
+                                                Pending Approval
+                                            </span>
+                                            break;
+
+                                        case IncidentApprovalStatus.Approved:
+                                            <span class="badge bg-success">
+                                                Approved
+                                            </span>
+                                            break;
+
+                                        case IncidentApprovalStatus.Rejected:
+                                            <span class="badge bg-danger">
+                                                Rejected
+                                            </span>
+                                            break;
+
+                                        default:
+                                            <span class="badge bg-secondary">
+                                                Unknown Status
+                                            </span>
+                                            break;
+                                    }
+                                </td>
+
+                                <!-- INCIDENT PROGRESS -->
+                                <td>
+                                    @switch (incident.Status)
+                                    {
+                                        case IncidentStatus.Pending:
+                                            <span class="badge bg-secondary">
+                                                Pending
+                                            </span>
+                                            break;
+
+                                        case IncidentStatus.UnderReview:
+                                            <span class="badge bg-info text-dark">
+                                                Under Review
+                                            </span>
+                                            break;
+
+                                        case IncidentStatus.InProgress:
+                                            <span class="badge bg-primary">
+                                                In Progress
+                                            </span>
+                                            break;
+
+                                        case IncidentStatus.Resolved:
+                                            <span class="badge bg-success">
+                                                Resolved
+                                            </span>
+                                            break;
+
+                                        case IncidentStatus.Closed:
+                                            <span class="badge bg-dark">
+                                                Closed
+                                            </span>
+                                            break;
+
+                                        default:
+                                            <span class="badge bg-secondary">
+                                                Unknown
+                                            </span>
+                                            break;
+                                    }
+                                </td>
+
+                                <!-- ADMIN FEEDBACK -->
+                                <td style="min-width: 180px;">
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        incident.ReviewNotes))
+                                    {
+                                        <span class="small">
+                                            @incident.ReviewNotes
+                                        </span>
+                                    }
+                                    else if (incident.ApprovalStatus ==
+                                             IncidentApprovalStatus.Pending)
+                                    {
+                                        <span class="text-muted small">
+                                            Awaiting administrator review
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">
+                                            No feedback provided
+                                        </span>
+                                    }
+                                </td>
+
+                                <!-- DATE -->
+                                <td>
+                                    @incident.CreatedAtUtc.ToString(
+                                        "dd MMM yyyy HH:mm")
+
+                                    <small class="text-muted">UTC</small>
+                                </td>
+
+                                <!-- DETAILS -->
+                                <td>
+                                    <a asp-action="Details"
+                                       asp-route-id="@incident.Id"
+                                       class="btn btn-sm btn-outline-primary">
+                                        View
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        }
+    </div>
+</div>

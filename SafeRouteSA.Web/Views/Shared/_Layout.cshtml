@@ -1,0 +1,405 @@
+﻿
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using SafeRouteSA.Web.Data
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject ApplicationDbContext DbContext
+
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+    var isAuthenticated = SignInManager.IsSignedIn(User);
+    var isAdmin = isAuthenticated && User.IsInRole("Admin");
+
+    // Count unread notifications for the signed-in user
+    var unreadNotificationCount = 0;
+
+    if (isAuthenticated)
+    {
+        var userId = UserManager.GetUserId(User);
+
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            unreadNotificationCount = await DbContext.Notifications
+                .AsNoTracking()
+                .CountAsync(n => n.UserId == userId && !n.IsRead);
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - SafeRoute SA</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/incident.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/home.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/navbar.css"
+          asp-append-version="true" />
+
+    <!-- NOTIFICATION BELL STYLING -->
+    <style>
+        .sr-notification-link {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 12px;
+            color: inherit;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: background-color 0.2s ease;
+        }
+
+        .sr-notification-link:hover {
+            background-color: rgba(128, 128, 128, 0.12);
+            color: inherit;
+        }
+
+        .sr-notification-link svg {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .sr-notification-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sr-notification-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body class="sr-app-body">
+
+    <!-- MAIN NAVIGATION -->
+    <header class="sr-header">
+
+        <nav class="navbar navbar-expand-lg sr-navbar">
+
+            <div class="container-fluid sr-nav-container">
+
+                <!-- BRAND -->
+                <a class="navbar-brand sr-brand"
+                   asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">
+
+                    <span class="sr-brand-icon">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="23"
+                             height="23"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            <path d="m9 12 2 2 4-4" />
+
+                        </svg>
+
+                    </span>
+
+                    <span class="sr-brand-name">
+                        SafeRoute <strong>SA</strong>
+                    </span>
+
+                </a>
+
+                <!-- MOBILE MENU -->
+                <button class="navbar-toggler sr-nav-toggle"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarMain"
+                        aria-controls="navbarMain"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+
+                    <span class="navbar-toggler-icon"></span>
+
+                </button>
+
+                <!-- NAVIGATION CONTENT -->
+                <div class="collapse navbar-collapse"
+                     id="navbarMain">
+
+                    <!-- MAIN LINKS -->
+                    <ul class="navbar-nav sr-nav-links">
+
+                        <!-- HOME: EVERYONE -->
+                        <li class="nav-item">
+
+                            <a class="nav-link sr-nav-link @(controller == "Home" && action == "Index" ? "active" : "")"
+                               asp-area=""
+                               asp-controller="Home"
+                               asp-action="Index">
+
+                                Home
+
+                            </a>
+
+                        </li>
+
+                        <!-- MY REPORTS: REGULAR USERS ONLY -->
+                        @if (isAuthenticated && !isAdmin)
+                        {
+                            <li class="nav-item">
+
+                                <a class="nav-link sr-nav-link @(controller == "Incidents" && action == "Index" ? "active" : "")"
+                                   asp-area=""
+                                   asp-controller="Incidents"
+                                   asp-action="Index">
+
+                                    My Reports
+
+                                </a>
+
+                            </li>
+                        }
+
+                        <!-- PRIVACY: EVERYONE -->
+                        <li class="nav-item">
+
+                            <a class="nav-link sr-nav-link @(controller == "Home" && action == "Privacy" ? "active" : "")"
+                               asp-area=""
+                               asp-controller="Home"
+                               asp-action="Privacy">
+
+                                Privacy
+
+                            </a>
+
+                        </li>
+
+                        <!-- ADMIN DASHBOARD: ADMINS ONLY -->
+                        @if (isAdmin)
+                        {
+                            <li class="nav-item">
+
+                                <a class="nav-link sr-nav-link @(controller == "Admin" ? "active" : "")"
+                                   asp-area=""
+                                   asp-controller="Admin"
+                                   asp-action="Index">
+
+                                    Admin Dashboard
+
+                                </a>
+
+                            </li>
+                        }
+
+                    </ul>
+
+                    <!-- RIGHT NAVIGATION -->
+                    <div class="sr-nav-actions">
+
+                        @if (isAuthenticated)
+                        {
+                            <!-- NOTIFICATION BELL -->
+                            <a class="sr-notification-link @(controller == "Notifications" ? "active" : "")"
+                               asp-area=""
+                               asp-controller="Notifications"
+                               asp-action="Index"
+                               aria-label="Notifications, @unreadNotificationCount unread"
+                               title="My Notifications">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     aria-hidden="true">
+
+                                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                                    <path d="M10 21h4" />
+
+                                </svg>
+
+                                <span class="sr-notification-text">
+                                    Notifications
+                                </span>
+
+                                @if (unreadNotificationCount > 0)
+                                {
+                                    <span class="sr-notification-count">
+                                        @(unreadNotificationCount > 99
+                                            ? "99+"
+                                            : unreadNotificationCount.ToString())
+                                    </span>
+                                }
+
+                            </a>
+
+                            <!-- EXISTING LOGIN/LOGOUT PARTIAL -->
+                            <partial name="_LoginPartial" />
+                        }
+                        else
+                        {
+                            <!-- SIGN IN -->
+                            <a class="sr-nav-login"
+                               asp-area="Identity"
+                               asp-page="/Account/Login">
+
+                                Sign In
+
+                            </a>
+
+                            <!-- REGISTER -->
+                            <a class="sr-nav-register"
+                               asp-area="Identity"
+                               asp-page="/Account/Register">
+
+                                Create Account
+
+                            </a>
+                        }
+
+                        <!-- REPORT INCIDENT: NON-ADMINS ONLY -->
+                        @if (!isAdmin)
+                        {
+                            <a class="sr-nav-report @(controller == "Incidents" && action == "Create" ? "sr-nav-report-active" : "")"
+                               asp-area=""
+                               asp-controller="Incidents"
+                               asp-action="Create">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="17"
+                                     height="17"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     aria-hidden="true">
+
+                                    <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
+                                    <circle cx="12" cy="10" r="2.5" />
+
+                                </svg>
+
+                                Report Incident
+
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+    <!-- LOGOUT MODAL OUTSIDE HEADER -->
+    <partial name="_LogoutModal" />
+
+    <!-- MAIN CONTENT -->
+    <div class="sr-main-wrapper">
+
+        <main role="main">
+            @RenderBody()
+        </main>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="sr-footer">
+
+        <div class="container-fluid sr-footer-inner">
+
+            <div class="sr-footer-brand">
+                <span class="sr-footer-shield">◆</span>
+                SafeRoute SA
+            </div>
+
+            <p class="sr-footer-description">
+                Building safer communities through
+                responsible incident reporting.
+            </p>
+
+            <div class="sr-footer-bottom">
+
+                <span>
+                    &copy; @DateTime.Now.Year SafeRoute SA.
+                    Portfolio Demonstration.
+                </span>
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Privacy">
+
+                    Privacy Policy
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
+
+

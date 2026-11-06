@@ -1,0 +1,102 @@
+﻿@model List<SafeRouteSA.Web.Models.Notification>
+@using SafeRouteSA.Web.Models
+
+@{
+    ViewData["Title"] = "Notifications";
+    var unreadCount = Model.Count(n => !n.IsRead);
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">My Notifications</h1>
+            <p class="text-muted">Your incident report updates.</p>
+        </div>
+
+        @if (unreadCount > 0)
+        {
+            <form asp-controller="Notifications"
+                  asp-action="MarkAllAsRead"
+                  method="post">
+                @Html.AntiForgeryToken()
+                <button class="btn btn-outline-primary" type="submit">
+                    Mark All as Read
+                </button>
+            </form>
+        }
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Total Notifications</h5>
+                    <h2>@Model.Count</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Unread Notifications</h5>
+                    <h2>@unreadCount</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No notifications yet.
+        </div>
+    }
+    else
+    {
+        @foreach (var notification in Model)
+        {
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    @if (!notification.IsRead)
+                    {
+                        <span class="badge bg-primary mb-2">Unread</span>
+                    }
+
+                    <h5>@notification.Title</h5>
+                    <p>@notification.Message</p>
+
+                    <small class="text-muted">
+                        @notification.CreatedAtUtc.ToString("dd MMM yyyy HH:mm") UTC
+                    </small>
+
+                    <div class="d-flex gap-2 mt-3">
+                        @if (notification.IncidentId.HasValue)
+                        {
+                            <a asp-controller="Notifications"
+                               asp-action="OpenIncident"
+                               asp-route-id="@notification.Id"
+                               class="btn btn-primary btn-sm">
+                                View Incident
+                            </a>
+                        }
+
+                        @if (!notification.IsRead)
+                        {
+                            <form asp-controller="Notifications"
+                                  asp-action="MarkAsRead"
+                                  asp-route-id="@notification.Id"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit"
+                                        class="btn btn-outline-secondary btn-sm">
+                                    Mark as Read
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

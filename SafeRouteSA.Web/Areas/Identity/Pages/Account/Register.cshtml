@@ -1,0 +1,188 @@
+@page
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<link rel="stylesheet"
+      href="~/css/auth.css"
+      asp-append-version="true" />
+
+<div class="sr-auth-page">
+    <div class="sr-auth-shell">
+
+        <!-- LEFT BRANDING -->
+        <aside class="sr-auth-brand">
+
+            <a asp-area=""
+               asp-controller="Home"
+               asp-action="Index"
+               class="sr-auth-logo">
+
+                <span class="sr-auth-logo-icon">◆</span>
+                SafeRoute SA
+
+            </a>
+
+            <div class="sr-auth-brand-content">
+
+                <div class="sr-auth-eyebrow">
+                    JOIN SAFEROUTE SA
+                </div>
+
+                <h1>
+                    Be part of a
+                    <span>safer community.</span>
+                </h1>
+
+                <p>
+                    Create your account and access
+                    GPS-based incident reporting and
+                    report management features.
+                </p>
+
+                <div class="sr-auth-feature">
+                    <span>✓</span>
+                    Submit Incident Reports
+                </div>
+
+                <div class="sr-auth-feature">
+                    <span>✓</span>
+                    Select GPS Locations
+                </div>
+
+                <div class="sr-auth-feature">
+                    <span>✓</span>
+                    Manage Your Reports
+                </div>
+
+            </div>
+
+            <div class="sr-auth-brand-footer">
+                SafeRoute SA | Portfolio Demonstration
+            </div>
+
+        </aside>
+
+        <!-- REGISTRATION FORM -->
+        <section class="sr-auth-form-panel">
+
+            <div class="sr-auth-form-content">
+
+                <div class="sr-auth-form-heading">
+
+                    <div class="sr-auth-form-eyebrow">
+                        GET STARTED
+                    </div>
+
+                    <h2>Create your account</h2>
+
+                    <p>
+                        Complete the form below to register
+                        with SafeRoute SA.
+                    </p>
+
+                </div>
+
+                <form id="registerForm"
+                      method="post"
+                      asp-route-returnUrl="@Model.ReturnUrl">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="sr-auth-error"
+                         role="alert"></div>
+
+                    <!-- EMAIL -->
+                    <div class="sr-auth-field">
+
+                        <label asp-for="Input.Email"></label>
+
+                        <input asp-for="Input.Email"
+                               class="sr-auth-input"
+                               autocomplete="username"
+                               placeholder="you@example.com" />
+
+                        <span asp-validation-for="Input.Email"
+                              class="text-danger small"></span>
+
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div class="sr-auth-field">
+
+                        <label asp-for="Input.Password"></label>
+
+                        <input asp-for="Input.Password"
+                               class="sr-auth-input"
+                               autocomplete="new-password"
+                               placeholder="Create a password" />
+
+                        <span asp-validation-for="Input.Password"
+                              class="text-danger small"></span>
+
+                    </div>
+
+                    <!-- CONFIRM PASSWORD -->
+                    <div class="sr-auth-field">
+
+                        <label asp-for="Input.ConfirmPassword"></label>
+
+                        <input asp-for="Input.ConfirmPassword"
+                               class="sr-auth-input"
+                               autocomplete="new-password"
+                               placeholder="Confirm your password" />
+
+                        <span asp-validation-for="Input.ConfirmPassword"
+                              class="text-danger small"></span>
+
+                    </div>
+
+                    <div class="sr-auth-info">
+                        Use a strong password that meets
+                        the application's security requirements.
+                    </div>
+
+                    <!-- REGISTER BUTTON -->
+                    <button id="registerSubmit"
+                            type="submit"
+                            class="sr-auth-submit">
+
+                        Create Account
+                        <span>→</span>
+
+                    </button>
+
+                </form>
+
+                <div class="sr-auth-switch">
+
+                    Already have an account?
+
+                    <a asp-page="./Login"
+                       asp-route-returnUrl="@Model.ReturnUrl">
+                        Sign In
+                    </a>
+
+                </div>
+
+                <div class="sr-auth-back">
+
+                    <a asp-area=""
+                       asp-controller="Home"
+                       asp-action="Index">
+                        ← Back to homepage
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

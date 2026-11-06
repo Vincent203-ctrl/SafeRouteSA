@@ -1,0 +1,32 @@
+﻿# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build files
+bin/
+obj/
+**/bin/
+**/obj/
+
+# Local settings and secrets
+appsettings.Development.json
+.env
+.env.*
+secrets.json
+*.pfx
+*.publishsettings
+
+# Database files
+*.mdf
+*.ldf
+*.db
+*.db-shm
+*.db-wal
+
+# Temporary files
+*.log
+*.tmp
+
+# Local SQL scripts
+SQLQuery1.sql

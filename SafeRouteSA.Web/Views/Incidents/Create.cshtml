@@ -1,0 +1,340 @@
+﻿
+@model SafeRouteSA.Web.ViewModels.IncidentCreateViewModel
+@using SafeRouteSA.Web.Models
+
+@{
+    ViewData["Title"] = "Report an Incident";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoT4llR2s0q5c="
+          crossorigin="anonymous" />
+}
+
+<div class="incident-page">
+
+    <!-- PAGE HEADER -->
+    <div class="incident-header">
+        <div>
+            <span class="eyebrow">SAFEROUTE SA</span>
+
+            <h1>Report an Incident</h1>
+
+            <p>
+                Help make our communities safer by reporting
+                an incident and selecting its location.
+            </p>
+        </div>
+
+        <a asp-controller="Incidents"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            My Reports
+        </a>
+    </div>
+
+    <!-- SAFETY NOTICE -->
+    <div class="alert alert-warning" role="alert">
+        <strong>Important:</strong>
+        SafeRoute SA is a portfolio demonstration and
+        does not contact emergency services.
+        For immediate assistance, contact official
+        emergency services.
+    </div>
+
+    <form asp-controller="Incidents"
+          asp-action="Create"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger mb-3">
+        </div>
+
+        <div class="row g-4">
+
+            <!-- INCIDENT INFORMATION -->
+            <div class="col-lg-5">
+
+                <div class="incident-card">
+
+                    <h4>Incident Information</h4>
+
+                    <p class="text-muted small mb-4">
+                        Tell us what happened.
+                    </p>
+
+                    <!-- TITLE -->
+                    <div class="mb-3">
+
+                        <label asp-for="Title"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="Title"
+                               class="form-control"
+                               placeholder="e.g. Road accident" />
+
+                        <span asp-validation-for="Title"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- CATEGORY -->
+                    <div class="mb-3">
+
+                        <label asp-for="Category"
+                               class="form-label">
+                        </label>
+
+                        <select asp-for="Category"
+                                asp-items="Html.GetEnumSelectList<IncidentCategory>()"
+                                class="form-select">
+
+                            <option value="">
+                                Select incident category
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="Category"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- DESCRIPTION -->
+                    <div class="mb-3">
+
+                        <label asp-for="Description"
+                               class="form-label">
+                        </label>
+
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="5"
+                                  placeholder="Describe what happened, when it happened and any important details...">
+                        </textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- LOCATION DESCRIPTION -->
+                    <div class="mb-3">
+
+                        <label asp-for="LocationDescription"
+                               class="form-label">
+                            Location Description
+                        </label>
+
+                        <input asp-for="LocationDescription"
+                               class="form-control"
+                               placeholder="Street, landmark or area" />
+
+                        <span asp-validation-for="LocationDescription"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- GPS LOCATION -->
+            <div class="col-lg-7">
+
+                <div class="incident-card">
+
+                    <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
+
+                        <div>
+                            <h4 class="mb-2">
+                                GPS Incident Location
+                            </h4>
+
+                            <p class="text-muted small mb-0">
+                                Pinpoint where the incident occurred.
+                            </p>
+                        </div>
+
+                        <span class="badge rounded-pill text-bg-light border">
+                            Interactive Map
+                        </span>
+
+                    </div>
+
+                    <!-- GPS INSTRUCTIONS -->
+                    <div class="alert alert-primary border-0 small mb-3">
+                        <strong>How to select a location:</strong>
+                        Click anywhere on the map, drag the blue
+                        marker, or use GPS to detect your current
+                        location.
+                    </div>
+
+                    <!-- GPS BUTTON -->
+                    <div class="d-flex align-items-center gap-2 flex-wrap mb-3">
+
+                        <button type="button"
+                                id="detectLocation"
+                                class="btn btn-primary">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="18"
+                                 height="18"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 aria-hidden="true">
+
+                                <circle cx="12" cy="12" r="8" />
+                                <circle cx="12" cy="12" r="2" />
+                                <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
+                            </svg>
+
+                            Detect My Location
+                        </button>
+
+                        <span class="small text-muted">
+                            GPS permission is requested only when clicked.
+                        </span>
+
+                    </div>
+
+                    <!-- LOCATION MESSAGE -->
+                    <div id="locationMessage"
+                         role="status"
+                         aria-live="polite"
+                         class="small mb-3">
+                        Select a location on the map to continue.
+                    </div>
+
+                    <!-- LEAFLET MAP -->
+                    <div class="sr-map-wrapper">
+
+                        <div id="incidentMap"
+                             aria-label="Interactive incident location map">
+                        </div>
+
+                    </div>
+
+                    <!-- SELECTED LOCATION PANEL -->
+                    <div class="sr-location-info">
+
+                        <div>
+                            <div class="sr-location-info-label">
+                                Selected Incident Location
+                            </div>
+
+                            <span id="selectedCoordinates">
+                                No location selected yet
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                            <span id="locationStatus">
+                                Choose location
+                            </span>
+
+                            <button type="button"
+                                    id="recenterLocation"
+                                    class="btn btn-outline-primary btn-sm">
+                                Recenter Map
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <!-- COORDINATES -->
+                    <div class="row mt-3">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label asp-for="Latitude"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Latitude"
+                                   class="form-control"
+                                   readonly />
+
+                            <span asp-validation-for="Latitude"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label asp-for="Longitude"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Longitude"
+                                   class="form-control"
+                                   readonly />
+
+                            <span asp-validation-for="Longitude"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- LOCATION PRIVACY -->
+                    <div class="small text-muted">
+                        Your selected incident coordinates will be
+                        included when you submit this report.
+                        You can adjust the marker before submitting.
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FORM ACTIONS -->
+        <div class="mt-4 d-flex align-items-center gap-3 flex-wrap">
+
+            <button type="submit"
+                    class="btn btn-primary btn-lg">
+                Submit Demo Incident
+            </button>
+
+            <a asp-controller="Incidents"
+               asp-action="Index"
+               class="btn btn-outline-secondary btn-lg">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin="anonymous">
+    </script>
+
+    <script src="~/js/incident-map.js"
+            asp-append-version="true">
+    </script>
+}
+

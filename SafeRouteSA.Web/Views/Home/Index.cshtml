@@ -1,0 +1,243 @@
+﻿
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="sr-home">
+
+    <!-- HERO SECTION -->
+    <section class="sr-hero">
+        <div class="sr-hero-content">
+
+            <div class="sr-hero-badge">
+                <span class="sr-status-dot"></span>
+                COMMUNITY SAFETY PLATFORM
+            </div>
+
+            <h1>
+                Safer communities
+                <span>start with action.</span>
+            </h1>
+
+            <p class="sr-hero-description">
+                Report incidents, identify locations using
+                interactive GPS maps, and manage your reports
+                through one simple and secure platform.
+            </p>
+
+            <div class="sr-hero-actions">
+                <a asp-controller="Incidents"
+                   asp-action="Create"
+                   class="sr-btn sr-btn-primary">
+                    <i class="bi bi-plus-circle"></i>
+                    Report an Incident
+                    <span aria-hidden="true">&rarr;</span>
+                </a>
+
+                <a asp-controller="Incidents"
+                   asp-action="Index"
+                   class="sr-btn sr-btn-outline">
+                    View My Reports
+                </a>
+            </div>
+
+            <div class="sr-hero-note">
+                <span class="sr-note-icon">&#9432;</span>
+                Portfolio demonstration platform.
+                Not connected to emergency services.
+            </div>
+
+        </div>
+
+        <div class="sr-hero-visual">
+            <div class="sr-dashboard-preview">
+
+                <div class="sr-preview-top">
+                    <div class="sr-preview-brand">
+                        <span class="sr-preview-symbol">&#9670;</span>
+                        SAFEROUTE SA
+                    </div>
+                    <span class="sr-preview-demo">DEMO</span>
+                </div>
+
+                <div class="sr-preview-body">
+
+                    <div class="sr-preview-heading">
+                        <span>INCIDENT REPORTING</span>
+                        <span class="sr-preview-indicator"></span>
+                    </div>
+
+                    <div class="sr-preview-map">
+                        <div class="sr-map-grid"></div>
+
+                        <div class="sr-map-road sr-road-one"></div>
+                        <div class="sr-map-road sr-road-two"></div>
+                        <div class="sr-map-road sr-road-three"></div>
+
+                        <div class="sr-map-pin sr-pin-one"></div>
+                        <div class="sr-map-pin sr-pin-two"></div>
+                        <div class="sr-map-pin sr-pin-three"></div>
+
+                        <div class="sr-map-label">
+                            SOUTH AFRICA
+                            <small>Location-based reporting</small>
+                        </div>
+                    </div>
+
+                    <div class="sr-preview-bottom">
+                        <div>
+                            <small>LOCATION SELECTION</small>
+                            <strong>Interactive GPS Map</strong>
+                        </div>
+                        <span class="sr-preview-check">&#10003;</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="sr-section" id="features">
+
+        <div class="sr-section-heading">
+            <span class="sr-section-label">PLATFORM FEATURES</span>
+
+            <h2>Everything you need to report incidents</h2>
+
+            <p>
+                Simple tools designed to make incident
+                reporting easier and more organised.
+            </p>
+        </div>
+
+        <div class="sr-features-grid">
+
+            <article class="sr-feature-card">
+                <div class="sr-feature-icon">&#9678;</div>
+
+                <h3>GPS Incident Reporting</h3>
+
+                <p>
+                    Select the location of an incident using
+                    an interactive map or request your
+                    current GPS position.
+                </p>
+
+                <a asp-controller="Incidents"
+                   asp-action="Create">
+                    Start reporting &rarr;
+                </a>
+            </article>
+
+            <article class="sr-feature-card">
+                <div class="sr-feature-icon">&#9776;</div>
+
+                <h3>Manage Your Reports</h3>
+
+                <p>
+                    View your submitted incident reports,
+                    review their details, and keep your
+                    information organised.
+                </p>
+
+                <a asp-controller="Incidents"
+                   asp-action="Index">
+                    View reports &rarr;
+                </a>
+            </article>
+
+            <article class="sr-feature-card">
+                <div class="sr-feature-icon">&#9670;</div>
+
+                <h3>Account-Based Access</h3>
+
+                <p>
+                    Register and sign in through the
+                    application's authentication system
+                    to access account-related features.
+                </p>
+
+                <a asp-area="Identity"
+                   asp-page="/Account/Register">
+                    Create an account &rarr;
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="sr-process-section">
+
+        <div class="sr-section-heading">
+            <span class="sr-section-label">HOW IT WORKS</span>
+            <h2>Three simple steps</h2>
+            <p>Reporting an incident doesn't need to be complicated.</p>
+        </div>
+
+        <div class="sr-steps-grid">
+
+            <div class="sr-step">
+                <div class="sr-step-number">01</div>
+                <h3>Describe the incident</h3>
+                <p>
+                    Enter the incident title, category,
+                    description, and location details.
+                </p>
+            </div>
+
+            <div class="sr-step">
+                <div class="sr-step-number">02</div>
+                <h3>Select the location</h3>
+                <p>
+                    Use GPS detection or click the map
+                    to place an accurate incident marker.
+                </p>
+            </div>
+
+            <div class="sr-step">
+                <div class="sr-step-number">03</div>
+                <h3>Submit your report</h3>
+                <p>
+                    Save the demonstration report and
+                    access it from the reports section.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CALL TO ACTION -->
+    <section class="sr-cta">
+        <div>
+            <span class="sr-section-label">GET STARTED</span>
+
+            <h2>Ready to report an incident?</h2>
+
+            <p>
+                Use SafeRoute SA to document incidents
+                and select their locations.
+            </p>
+        </div>
+
+        <a asp-controller="Incidents"
+           asp-action="Create"
+           class="sr-btn sr-btn-primary">
+            Report an Incident
+            <span aria-hidden="true">&rarr;</span>
+        </a>
+    </section>
+
+    <!-- DISCLAIMER -->
+    <div class="sr-disclaimer">
+        <strong>Important:</strong>
+        SafeRoute SA is currently a portfolio demonstration.
+        Reports submitted here are not monitored by police,
+        emergency responders, or other public safety agencies.
+        For an emergency, contact the appropriate official
+        emergency service.
+    </div>
+
+</div>
+

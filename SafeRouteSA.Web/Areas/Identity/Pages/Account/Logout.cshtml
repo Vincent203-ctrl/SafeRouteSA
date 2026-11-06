@@ -1,0 +1,48 @@
+
+@page
+@model SafeRouteSA.Web.Areas.Identity.Pages.Account.LogoutModel
+
+@{
+    ViewData["Title"] = "Log Out";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <h2>Sign Out</h2>
+
+                <p class="text-muted">
+                    Are you sure you want to sign out of SafeRoute SA?
+                </p>
+
+                <form method="post"
+                      asp-area="Identity"
+                      asp-page="/Account/Logout"
+                      asp-route-returnUrl="@Url.Content("~/")">
+
+                    <button type="submit" class="btn btn-danger">
+                        Sign Out
+                    </button>
+                </form>
+            }
+            else
+            {
+                <h2>You're Signed Out</h2>
+
+                <p class="text-muted">
+                    You are not currently signed in.
+                </p>
+
+                <a asp-area="Identity"
+                   asp-page="/Account/Login"
+                   class="btn btn-primary">
+                    Sign In Again
+                </a>
+            }
+
+        </div>
+    </div>
+</div>

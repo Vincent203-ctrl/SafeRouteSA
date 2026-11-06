@@ -1,0 +1,452 @@
+﻿@model SafeRouteSA.Web.ViewModels.AdminDashboardViewModel
+@using SafeRouteSA.Web.Models
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container py-5">
+
+    <!-- DASHBOARD HEADER -->
+    <div class="mb-4">
+        <h1 class="fw-bold">Admin Dashboard</h1>
+        <p class="text-muted">
+            Manage and review SafeRoute SA incident reports.
+        </p>
+    </div>
+
+    <!-- SUCCESS MESSAGE -->
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="alert alert-success">
+            @success
+        </div>
+    }
+
+    <!-- ERROR MESSAGE -->
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <div class="alert alert-danger">
+            @error
+        </div>
+    }
+
+    <!-- DASHBOARD STATISTICS -->
+    <div class="row g-3 mb-5">
+
+        <!-- TOTAL REPORTS -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Total Reports</p>
+                    <h2 class="fw-bold">
+                        @Model.TotalReports
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- PENDING REPORTS -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Pending</p>
+                    <h2 class="fw-bold text-warning">
+                        @Model.PendingReports
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- APPROVED REPORTS -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Approved</p>
+                    <h2 class="fw-bold text-success">
+                        @Model.ApprovedReports
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- REJECTED REPORTS -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Rejected</p>
+                    <h2 class="fw-bold text-danger">
+                        @Model.RejectedReports
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SEARCH AND FILTER REPORTS -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                Search and Filter Incident Reports
+            </h5>
+
+            <form asp-controller="Admin"
+                  asp-action="Index"
+                  method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <!-- SEARCH INPUT -->
+                    <div class="col-md-7">
+
+                        <label for="searchTerm"
+                               class="form-label">
+                            Search Reports
+                        </label>
+
+                        <input type="search"
+                               id="searchTerm"
+                               name="searchTerm"
+                               value="@Model.SearchTerm"
+                               maxlength="150"
+                               class="form-control"
+                               placeholder="Title, reference or location" />
+
+                    </div>
+
+                    <!-- APPROVAL STATUS FILTER -->
+                    <div class="col-md-3">
+
+                        <label for="statusFilter"
+                               class="form-label">
+                            Approval Status
+                        </label>
+
+                        <select id="statusFilter"
+                                name="statusFilter"
+                                class="form-select">
+
+                            <option value="All"
+                                    selected="@(Model.StatusFilter == "All")">
+                                All Reports
+                            </option>
+
+                            <option value="Pending"
+                                    selected="@(Model.StatusFilter == "Pending")">
+                                Pending
+                            </option>
+
+                            <option value="Approved"
+                                    selected="@(Model.StatusFilter == "Approved")">
+                                Approved
+                            </option>
+
+                            <option value="Rejected"
+                                    selected="@(Model.StatusFilter == "Rejected")">
+                                Rejected
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- APPLY BUTTON -->
+                    <div class="col-md-2">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+                            Apply
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+            <!-- ACTIVE SEARCH AND FILTER INFORMATION -->
+            @if (!string.IsNullOrWhiteSpace(Model.SearchTerm) ||
+                 Model.StatusFilter != "All")
+            {
+                <div class="d-flex flex-wrap
+                    justify-content-between
+                    align-items-center gap-2 mt-3">
+
+                    <span class="text-muted small">
+
+                        Found
+                        <strong>@Model.SearchResultCount</strong>
+                        matching report(s).
+
+                        @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                        {
+                            <span>
+                                Search:
+                                <strong>@Model.SearchTerm</strong>
+                            </span>
+                        }
+
+                        @if (Model.StatusFilter != "All")
+                        {
+                            <span>
+                                Status:
+                                <strong>@Model.StatusFilter</strong>
+                            </span>
+                        }
+
+                    </span>
+
+                    <a asp-controller="Admin"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary btn-sm">
+                        Clear Filters
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+    <!-- INCIDENT REPORTS TABLE -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white py-3">
+
+            <h4 class="fw-bold mb-0">
+                Incident Reports
+            </h4>
+
+            <p class="text-muted small mb-0 mt-1">
+                Open an incident to review its full details,
+                location and approval status.
+            </p>
+
+        </div>
+
+        <div class="card-body">
+
+            @if (!Model.Incidents.Any())
+            {
+                <div class="text-center py-5">
+
+                    @if (!string.IsNullOrWhiteSpace(Model.SearchTerm) ||
+                         Model.StatusFilter != "All")
+                    {
+                        <h5>No Matching Reports Found</h5>
+
+                        <p class="text-muted">
+                            No incident reports match your
+                            search or selected filter.
+                        </p>
+
+                        <a asp-controller="Admin"
+                           asp-action="Index"
+                           class="btn btn-outline-primary">
+                            Show All Reports
+                        </a>
+                    }
+                    else
+                    {
+                        <h5>No Incident Reports</h5>
+
+                        <p class="text-muted">
+                            No incident reports have been
+                            submitted yet.
+                        </p>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Reference</th>
+                                <th>Incident</th>
+                                <th>Category</th>
+                                <th>Submitted</th>
+                                <th>Approval</th>
+                                <th>Progress</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var incident in Model.Incidents)
+                            {
+                                <tr>
+
+                                    <!-- REFERENCE -->
+                                    <td>
+                                        <small class="fw-semibold">
+                                            @incident.ReferenceNumber
+                                        </small>
+                                    </td>
+
+                                    <!-- INCIDENT -->
+                                    <td>
+
+                                        <strong>
+                                            @incident.Title
+                                        </strong>
+
+                                        <div class="small text-muted">
+                                            @(string.IsNullOrWhiteSpace(
+                                                incident.LocationDescription)
+                                                ? "Location not specified"
+                                                : incident.LocationDescription)
+                                        </div>
+
+                                    </td>
+
+                                    <!-- CATEGORY -->
+                                    <td>
+                                        @incident.Category
+                                    </td>
+
+                                    <!-- DATE SUBMITTED -->
+                                    <td>
+                                        <span class="small">
+                                            @incident.CreatedAtUtc.ToString(
+                                                "dd MMM yyyy HH:mm") UTC
+                                        </span>
+                                    </td>
+
+                                    <!-- APPROVAL STATUS -->
+                                    <td>
+
+                                        @switch (incident.ApprovalStatus)
+                                        {
+                                            case IncidentApprovalStatus.Pending:
+
+                                                <span class="badge bg-warning text-dark">
+                                                    Pending
+                                                </span>
+                                                break;
+
+                                            case IncidentApprovalStatus.Approved:
+
+                                                <span class="badge bg-success">
+                                                    Approved
+                                                </span>
+                                                break;
+
+                                            case IncidentApprovalStatus.Rejected:
+
+                                                <span class="badge bg-danger">
+                                                    Rejected
+                                                </span>
+                                                break;
+
+                                            default:
+
+                                                <span class="badge bg-secondary">
+                                                    Unknown
+                                                </span>
+                                                break;
+                                        }
+
+                                    </td>
+
+                                    <!-- INCIDENT PROGRESS -->
+                                    <td>
+
+                                        @switch (incident.Status)
+                                        {
+                                            case IncidentStatus.Pending:
+
+                                                <span class="badge bg-secondary">
+                                                    Pending
+                                                </span>
+                                                break;
+
+                                            case IncidentStatus.UnderReview:
+
+                                                <span class="badge bg-info text-dark">
+                                                    Under Review
+                                                </span>
+                                                break;
+
+                                            case IncidentStatus.InProgress:
+
+                                                <span class="badge bg-primary">
+                                                    In Progress
+                                                </span>
+                                                break;
+
+                                            case IncidentStatus.Resolved:
+
+                                                <span class="badge bg-success">
+                                                    Resolved
+                                                </span>
+                                                break;
+
+                                            case IncidentStatus.Closed:
+
+                                                <span class="badge bg-dark">
+                                                    Closed
+                                                </span>
+                                                break;
+
+                                            default:
+
+                                                <span class="badge bg-secondary">
+                                                    Unknown
+                                                </span>
+                                                break;
+                                        }
+
+                                    </td>
+
+                                    <!-- ACTIONS -->
+                                    <td style="min-width:150px">
+
+                                        <a asp-controller="Admin"
+                                           asp-action="Details"
+                                           asp-route-id="@incident.Id"
+                                           class="btn btn-outline-primary btn-sm w-100">
+                                            View Details
+                                        </a>
+
+                                        @if (incident.ApprovalStatus ==
+                                             IncidentApprovalStatus.Pending)
+                                        {
+                                            <div class="small text-warning mt-2 text-center">
+                                                Awaiting Review
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="small text-muted mt-2 text-center">
+                                                Reviewed
+                                            </div>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+

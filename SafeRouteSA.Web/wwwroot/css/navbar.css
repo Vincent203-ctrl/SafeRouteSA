@@ -1,0 +1,476 @@
+﻿
+/* ==========================================
+   SAFEROUTE SA - PROFESSIONAL NAVIGATION
+   ========================================== */
+
+:root {
+    --sr-navy: #0f172a;
+    --sr-blue: #2563eb;
+    --sr-blue-dark: #1d4ed8;
+    --sr-text: #334155;
+    --sr-muted: #64748b;
+    --sr-border: #e2e8f0;
+    --sr-background: #f8fafc;
+}
+
+/* HEADER */
+.sr-header {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    background: #ffffff;
+    border-bottom: 1px solid var(--sr-border);
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
+}
+
+.sr-navbar {
+    min-height: 78px;
+    padding: 12px 0;
+    background: #ffffff;
+}
+
+.sr-nav-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 36px;
+}
+
+/* BRAND */
+.sr-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+    margin-right: 42px;
+}
+
+.sr-brand-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 12px;
+    box-shadow: 0 5px 12px rgba(37, 99, 235, 0.18);
+}
+
+.sr-brand-name {
+    color: var(--sr-navy);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    white-space: nowrap;
+}
+
+    .sr-brand-name strong {
+        color: var(--sr-blue);
+        font-weight: 800;
+    }
+
+.sr-brand:hover .sr-brand-name {
+    color: var(--sr-navy);
+}
+
+/* NAVIGATION LINKS */
+.sr-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sr-nav-link {
+    position: relative;
+    padding: 12px 15px !important;
+    color: var(--sr-text) !important;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+    .sr-nav-link:hover {
+        color: var(--sr-blue) !important;
+    }
+
+    .sr-nav-link.active {
+        color: var(--sr-blue) !important;
+    }
+
+        .sr-nav-link.active::after {
+            content: "";
+            position: absolute;
+            bottom: 4px;
+            left: 15px;
+            right: 15px;
+            height: 3px;
+            background: var(--sr-blue);
+            border-radius: 3px;
+        }
+
+/* RIGHT ACTIONS */
+.sr-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: auto;
+}
+
+.sr-nav-login {
+    text-decoration: none;
+    color: var(--sr-text);
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+    .sr-nav-login:hover {
+        color: var(--sr-blue);
+    }
+
+.sr-nav-register {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--sr-border);
+    background: #ffffff;
+    color: var(--sr-navy);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+    .sr-nav-register:hover {
+        background: var(--sr-background);
+        border-color: #cbd5e1;
+        color: var(--sr-blue);
+    }
+
+/* REPORT INCIDENT BUTTON */
+.sr-nav-report {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 18px;
+    background: var(--sr-blue);
+    border: 1px solid var(--sr-blue);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.18);
+    transition: all 0.2s ease;
+}
+
+    .sr-nav-report:hover,
+    .sr-nav-report-active {
+        background: var(--sr-blue-dark);
+        border-color: var(--sr-blue-dark);
+        color: #ffffff;
+        transform: translateY(-1px);
+    }
+
+/* AUTHENTICATED USER NAV */
+.sr-nav-actions .navbar-nav {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    margin: 0;
+}
+
+    .sr-nav-actions .navbar-nav .nav-link {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .sr-nav-actions .navbar-nav form {
+        margin: 0;
+    }
+
+    .sr-nav-actions .navbar-nav button {
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+        .sr-nav-actions .navbar-nav button:hover {
+            color: var(--sr-blue) !important;
+        }
+
+/* MAIN PAGE */
+.sr-app-body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+}
+
+.sr-main-wrapper {
+    flex: 1;
+    width: 100%;
+}
+
+/* FOOTER */
+.sr-footer {
+    background: #0f172a;
+    color: #cbd5e1;
+    padding: 36px 0 20px;
+    margin-top: 48px;
+}
+
+.sr-footer-inner {
+    max-width: 1440px;
+    padding: 0 36px;
+    margin: 0 auto;
+}
+
+.sr-footer-brand {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.sr-footer-shield {
+    color: #60a5fa;
+    margin-right: 6px;
+}
+
+.sr-footer-description {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 24px;
+}
+
+.sr-footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+    .sr-footer-bottom a {
+        color: #cbd5e1;
+        text-decoration: none;
+    }
+
+        .sr-footer-bottom a:hover {
+            color: #ffffff;
+        }
+
+/* RESPONSIVE NAVIGATION */
+@media (max-width: 1199.98px) {
+    .sr-nav-container {
+        padding: 0 24px;
+    }
+
+    .sr-brand {
+        margin-right: 20px;
+    }
+
+    .sr-nav-links {
+        gap: 0;
+    }
+
+    .sr-nav-link {
+        padding: 12px 10px !important;
+    }
+
+    .sr-nav-actions {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .sr-navbar {
+        min-height: 70px;
+    }
+
+    .sr-nav-container {
+        padding: 0 20px;
+    }
+
+    .sr-nav-toggle {
+        border: 1px solid var(--sr-border);
+        border-radius: 10px;
+        padding: 8px 10px;
+    }
+
+        .sr-nav-toggle:focus {
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+    #navbarMain {
+        padding-top: 18px;
+    }
+
+    .sr-nav-links {
+        align-items: stretch;
+        gap: 4px;
+    }
+
+    .sr-nav-link {
+        padding: 12px 14px !important;
+        border-radius: 8px;
+    }
+
+        .sr-nav-link.active {
+            background: #eff6ff;
+        }
+
+            .sr-nav-link.active::after {
+                display: none;
+            }
+
+    .sr-nav-actions {
+        margin-left: 0;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--sr-border);
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+        .sr-nav-actions .navbar-nav {
+            flex-wrap: wrap;
+        }
+
+    .sr-nav-report {
+        width: 100%;
+        margin-top: 6px;
+    }
+
+    .sr-footer-inner {
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .sr-brand-name {
+        font-size: 19px;
+    }
+
+    .sr-brand-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .sr-nav-container {
+        padding: 0 16px;
+    }
+
+    .sr-nav-actions {
+        gap: 12px;
+    }
+
+    .sr-footer {
+        padding: 30px 0 20px;
+    }
+
+    .sr-footer-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* =========================================
+   SAFEROUTE SA - LOGOUT CONFIRMATION MODAL
+   ========================================= */
+
+#logoutConfirmModal {
+    z-index: 1055 !important;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+#logoutConfirmModal .modal-dialog {
+    max-width: 560px;
+    margin: 20px auto;
+}
+
+#logoutConfirmModal .modal-content {
+    background: #ffffff;
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 70px rgba(15, 23, 42, 0.2);
+}
+
+#logoutConfirmModal .modal-header {
+    padding: 24px 28px 10px;
+}
+
+#logoutConfirmModal .modal-title {
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+#logoutConfirmModal .modal-body {
+    padding: 20px 30px 30px;
+}
+
+    #logoutConfirmModal .modal-body h4 {
+        color: #0f172a;
+        font-size: 23px;
+        font-weight: 800;
+    }
+
+    #logoutConfirmModal .modal-body p {
+        color: #64748b;
+        line-height: 1.7;
+        font-size: 15px;
+    }
+
+.sr-logout-wave {
+    font-size: 52px;
+}
+
+#logoutConfirmModal .modal-footer {
+    gap: 12px;
+}
+
+    #logoutConfirmModal .modal-footer .btn {
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+#logoutConfirmModal .btn-danger {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+    #logoutConfirmModal .btn-danger:hover {
+        background: #b91c1c;
+        border-color: #b91c1c;
+    }
+
+@media (max-width: 575.98px) {
+    #logoutConfirmModal .modal-dialog {
+        margin: 16px;
+    }
+
+    #logoutConfirmModal .modal-body h4 {
+        font-size: 20px;
+    }
+
+    #logoutConfirmModal .modal-footer {
+        flex-wrap: wrap;
+    }
+}

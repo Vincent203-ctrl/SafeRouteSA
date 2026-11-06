@@ -1,0 +1,205 @@
+﻿@model List<SafeRouteSA.Web.Models.Notification>
+@using SafeRouteSA.Web.Models
+
+@{
+    ViewData["Title"] = "Notifications";
+    var unreadCount = Model.Count(n => !n.IsRead);
+}
+
+<div class="container py-5">
+
+    <!-- HEADER -->
+    <div class="d-flex flex-wrap justify-content-between
+        align-items-center gap-3 mb-4">
+
+        <div>
+            <h1 class="fw-bold mb-2">
+                My Notifications
+            </h1>
+
+            <p class="text-muted mb-0">
+                Stay updated on your incident reports.
+            </p>
+        </div>
+
+        @if (unreadCount > 0)
+        {
+            <form asp-controller="Notifications"
+                  asp-action="MarkAllAsRead"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <button type="submit"
+                        class="btn btn-outline-primary">
+                    Mark All as Read
+                </button>
+
+            </form>
+        }
+
+    </div>
+
+    <!-- NOTIFICATION COUNTS -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">
+                        Total Notifications
+                    </p>
+
+                    <h3 class="fw-bold">
+                        @Model.Count
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">
+                        Unread Notifications
+                    </p>
+
+                    <h3 class="fw-bold text-primary">
+                        @unreadCount
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NOTIFICATION LIST -->
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center py-5">
+
+                <h4 class="fw-bold">
+                    No Notifications Yet
+                </h4>
+
+                <p class="text-muted mb-0">
+                    Your notifications will appear here
+                    when there are updates.
+                </p>
+
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-column gap-3">
+
+            @foreach (var notification in Model)
+            {
+                var borderClass = notification.IsRead
+                    ? "border-0"
+                    : "border-primary";
+
+                <div class="card shadow-sm @borderClass">
+
+                    <div class="card-body">
+
+                        <div class="d-flex flex-wrap
+                            justify-content-between gap-3">
+
+                            <div class="flex-grow-1">
+
+                                <!-- NOTIFICATION TYPE -->
+                                @switch (notification.Type)
+                                {
+                                    case NotificationType.IncidentSubmitted:
+
+                                        <span class="badge bg-info text-dark mb-2">
+                                            New Report
+                                        </span>
+                                        break;
+
+                                    case NotificationType.IncidentApproved:
+
+                                        <span class="badge bg-success mb-2">
+                                            Approved
+                                        </span>
+                                        break;
+
+                                    case NotificationType.IncidentRejected:
+
+                                        <span class="badge bg-danger mb-2">
+                                            Rejected
+                                        </span>
+                                        break;
+                                }
+
+                                @if (!notification.IsRead)
+                                {
+                                    <span class="badge bg-primary mb-2">
+                                        Unread
+                                    </span>
+                                }
+
+                                <!-- TITLE -->
+                                <h5 class="fw-bold">
+                                    @notification.Title
+                                </h5>
+
+                                <!-- MESSAGE -->
+                                <p class="text-muted mb-2">
+                                    @notification.Message
+                                </p>
+
+                                <!-- DATE -->
+                                <small class="text-muted">
+                                    @notification.CreatedAtUtc.ToString(
+                                        "dd MMM yyyy HH:mm") UTC
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ACTION BUTTONS -->
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+
+                            @if (notification.IncidentId.HasValue)
+                            {
+                                <a asp-controller="Notifications"
+                                   asp-action="OpenIncident"
+                                   asp-route-id="@notification.Id"
+                                   class="btn btn-primary btn-sm">
+                                    View Incident
+                                </a>
+                            }
+
+                            @if (!notification.IsRead)
+                            {
+                                <form asp-controller="Notifications"
+                                      asp-action="MarkAsRead"
+                                      asp-route-id="@notification.Id"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-outline-secondary btn-sm">
+                                        Mark as Read
+                                    </button>
+
+                                </form>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>
