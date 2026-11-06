@@ -235,24 +235,26 @@ Restart the application to allow the configured seeding process to run.
 
 ---
 
+
 ## 📸 Application Screenshots
 
-Screenshots can be added to demonstrate the application visually.
+The following screenshots demonstrate the main features of SafeRoute SA.
 
-Suggested screenshots:
+### 🏠 Homepage
+![SafeRoute SA Homepage](screenshots/homepage.png)
 
-- Home page
-- Registration and login
-- Incident submission form
-- Incident details and location map
-- My Reports page
-- Administrator dashboard
-- Administrator incident review
-- Notifications page
+### 🚀 Platform Features
+![SafeRoute SA Platform Features](screenshots/homepage-features.png)
 
-*Screenshots will be added as the project documentation is finalized.*
+### 📋 My Incident Reports
+![My Incident Reports](screenshots/my-reports.png)
 
----
+### 🔔 Notifications
+![SafeRoute SA Notifications](screenshots/notifications.png)
+
+### 🛡️ Administrator Dashboard
+![SafeRoute SA Admin Dashboard](screenshots/admin-dashboard.png)
+
 
 ## 🎯 Project Objectives
 
